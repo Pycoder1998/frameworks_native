@@ -30,7 +30,6 @@
 #include <renderengine/RenderEngine.h>
 #include <system/window.h>
 #include <ui/DisplayId.h>
-#include <ui/DisplayIdentification.h>
 #include <ui/DisplayState.h>
 #include <ui/GraphicTypes.h>
 #include <ui/HdrCapabilities.h>
@@ -66,6 +65,17 @@ struct DisplayDeviceCreationArgs;
 namespace display {
 class DisplaySnapshot;
 } // namespace display
+
+namespace gui {
+inline const char* to_string(ISurfaceComposer::OptimizationPolicy optimizationPolicy) {
+    switch (optimizationPolicy) {
+        case ISurfaceComposer::OptimizationPolicy::optimizeForPower:
+            return "optimizeForPower";
+        case ISurfaceComposer::OptimizationPolicy::optimizeForPerformance:
+            return "optimizeForPerformance";
+    }
+}
+} // namespace gui
 
 class DisplayDevice : public RefBase {
 public:
@@ -209,7 +219,8 @@ public:
             REQUIRES(kMainThreadContext);
     void updateRefreshRateOverlayRate(Fps refreshRate, Fps renderFps, bool setByHwc = false);
     bool isRefreshRateOverlayEnabled() const { return mRefreshRateOverlay != nullptr; }
-    void animateOverlay();
+    void animateRefreshRateOverlay();
+    void animateHdrSdrRatioOverlay();
     bool onKernelTimerChanged(std::optional<DisplayModeId>, bool timerExpired);
     void onVrrIdle(bool idle);
 
